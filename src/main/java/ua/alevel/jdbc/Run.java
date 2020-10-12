@@ -6,8 +6,9 @@ import java.util.Scanner;
 public class Run {
 
     public static void main(String[] args) {
-        getOfficesInfo();
+        getOfficesInfo(0);
         System.out.println();
+        showMore(0);
 
         EMEATerritory();
         System.out.println();
@@ -16,6 +17,25 @@ public class Run {
         System.out.println();
 
         newAddress();
+    }
+
+    private static void showMore(int start) {
+        System.out.println("Do you want more results? (Y / N): ");
+        Scanner in = new Scanner(System.in);
+        char c = in.nextLine().toUpperCase().charAt(0);
+        switch (c) {
+            case 'Y':
+                start += 5;
+                getOfficesInfo(start);
+                showMore(start);
+                break;
+            case 'N':
+                System.out.println();
+                break;
+            default:
+                System.out.println("Please, input Y or N.");
+                showMore(start);
+        }
     }
 
     private static void EMEATerritory() {
@@ -94,11 +114,11 @@ public class Run {
         }
     }
 
-    private static void getOfficesInfo() {
+    private static void getOfficesInfo(int current) {
         try (Connection connection = DataSource.getConnection();
              Statement statement = connection.createStatement()) {
 
-            String query = "Select * from offices";
+            String query = "Select * from offices limit " + current + ", 5";
 
             ResultSet resultSet = statement.executeQuery(query);
             ResultSetMetaData rsmd = resultSet.getMetaData();
